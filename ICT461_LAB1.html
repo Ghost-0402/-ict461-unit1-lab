@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICT461 Course Registration</title>
+<style>
+  :root {
+    --color-primary: #1d4ed8;
+    --color-primary-dark: #1e3a8a;
+    --color-bg: #f4f6fb;
+    --color-surface: #ffffff;
+    --color-border: #d1d5db;
+    --color-text: #1f2937;
+    --color-muted: #4b5563;
+    --color-error: #b91c1c;
+    --color-error-bg: #fef2f2;
+    --color-success: #15803d;
+    --color-success-bg: #f0fdf4;
+    --radius: 10px;
+    --space-1: 0.5rem;
+    --space-2: 1rem;
+    --space-3: 1.5rem;
+    font-size: 16px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.5;
+  }
+
+  header.site-header {
+    background: var(--color-primary-dark);
+    color: #fff;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  header.site-header h1 {
+    margin: 0;
+    font-size: 1.4rem;
+  }
+
+  header.site-header p {
+    margin: 0.25rem 0 0;
+    font-size: 0.9rem;
+    color: #dbeafe;
+  }
+
+  main {
+    max-width: 900px;
+    margin: var(--space-3) auto;
+    padding: 0 var(--space-2);
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: var(--space-3);
+  }
+
+  @media (max-width: 700px) {
+    main {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  section.card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-3);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+
+  section.card h2 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--space-1);
+  }
+
+  .field {
+    margin-bottom: var(--space-2);
+  }
+
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    font-size: 0.95rem;
+  }
+
+  .hint {
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    margin-top: 0.2rem;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  select {
+    width: 100%;
+    padding: 0.6rem 0.7rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font-size: 1rem;
+    background: #fff;
+    color: var(--color-text);
+  }
+
+  input:focus,
+  select:focus,
+  button:focus,
+  input[type="checkbox"]:focus {
+    outline: 3px solid #93c5fd;
+    outline-offset: 1px;
+  }
+
+  input[aria-invalid="true"],
+  select[aria-invalid="true"] {
+    border-color: var(--color-error);
+    background: var(--color-error-bg);
+  }
+
+  .error-msg {
+    color: var(--color-error);
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+    display: none;
+  }
+
+  .error-msg.visible {
+    display: block;
+  }
+
+  fieldset {
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    margin: 0 0 var(--space-2);
+    padding: var(--space-2);
+  }
+
+  legend {
+    font-weight: 600;
+    padding: 0 0.4rem;
+    font-size: 0.95rem;
+  }
+
+  .checkbox-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-top: var(--space-1);
+  }
+
+  .checkbox-row input {
+    margin-top: 0.25rem;
+  }
+
+  button[type="submit"] {
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    padding: 0.7rem 1.4rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  button[type="submit"]:hover,
+  button[type="submit"]:focus {
+    background: var(--color-primary-dark);
+  }
+
+  button[type="submit"]:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+  }
+
+  #form-status {
+    margin-top: var(--space-2);
+    padding: var(--space-2);
+    border-radius: 6px;
+    display: none;
+  }
+
+  #form-status.success {
+    display: block;
+    background: var(--color-success-bg);
+    color: var(--color-success);
+    border: 1px solid #bbf7d0;
+  }
+
+  #form-status.error {
+    display: block;
+    background: var(--color-error-bg);
+    color: var(--color-error);
+    border: 1px solid #fecaca;
+  }
+
+  .summary-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .summary-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    border-bottom: 1px dashed var(--color-border);
+    font-size: 0.9rem;
+  }
+
+  .summary-list li:last-child {
+    border-bottom: none;
+  }
+
+  .summary-total {
+    margin-top: var(--space-2);
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.05rem;
+    border-top: 2px solid var(--color-border);
+    padding-top: var(--space-1);
+  }
+
+  footer {
+    text-align: center;
+    color: var(--color-muted);
+    font-size: 0.8rem;
+    padding: var(--space-3) var(--space-2);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>ICT461 &mdash; Course Registration</h1>
+  <p>Unit 1 Lab Assignment &mdash; Semester Registration Portal</p>
+</header>
+
+<main>
+  <!-- Registration form -->
+  <section class="card" aria-labelledby="form-heading">
+    <h2 id="form-heading">Student Registration Form</h2>
+
+    <form id="registration-form" novalidate>
+
+      <div class="field">
+        <label for="full-name">Full Name</label>
+        <input
+          type="text"
+          id="full-name"
+          name="fullName"
+          autocomplete="name"
+          aria-describedby="full-name-error"
+          aria-invalid="false"
+          required
+        >
+        <p class="error-msg" id="full-name-error" role="alert">Please enter your full name.</p>
+      </div>
+
+      <div class="field">
+        <label for="student-email">Student Email</label>
+        <input
+          type="email"
+          id="student-email"
+          name="studentEmail"
+          autocomplete="email"
+          aria-describedby="student-email-hint student-email-error"
+          aria-invalid="false"
+          required
+        >
+        <p class="hint" id="student-email-hint">Use your university email address.</p>
+        <p class="error-msg" id="student-email-error" role="alert">Please enter a valid email address.</p>
+      </div>
+
+      <div class="field">
+        <label for="student-id">Student ID</label>
+        <input
+          type="text"
+          id="student-id"
+          name="studentId"
+          inputmode="numeric"
+          aria-describedby="student-id-hint student-id-error"
+          aria-invalid="false"
+          required
+        >
+        <p class="hint" id="student-id-hint">9-digit ID, e.g. 202345678.</p>
+        <p class="error-msg" id="student-id-error" role="alert">Student ID must be exactly 9 digits.</p>
+      </div>
+
+      <div class="field">
+        <label for="course-select">Course</label>
+        <select id="course-select" name="course" aria-describedby="course-error" aria-invalid="false" required>
+          <option value="">-- Select a course --</option>
+          <option value="ICT461" data-fee="2000">ICT461 &mdash; Web Systems Development (K2000)</option>
+          <option value="ICT411" data-fee="2000">ICT411 &mdash; Cloud Computing (K2000)</option>
+          <option value="ICS441" data-fee="2000">ICS441 &mdash; Cybersecurity Investigations (K2000)</option>
+          <option value="ICT332" data-fee="2000">ICT332 &mdash; Generative AI &amp; LLMs (K2000)</option>
+        </select>
+        <p class="error-msg" id="course-error" role="alert">Please select a course.</p>
+      </div>
+
+      <fieldset>
+        <legend>Study Mode</legend>
+        <div class="checkbox-row">
+          <input type="radio" id="mode-full" name="studyMode" value="full-time" checked>
+          <label for="mode-full">Full-time</label>
+        </div>
+        <div class="checkbox-row">
+          <input type="radio" id="mode-part" name="studyMode" value="part-time">
+          <label for="mode-part">Part-time</label>
+        </div>
+      </fieldset>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="terms" name="terms" aria-describedby="terms-error" required>
+        <label for="terms">I confirm the information above is correct and I agree to the registration terms.</label>
+      </div>
+      <p class="error-msg" id="terms-error" role="alert">You must confirm the registration terms before submitting.</p>
+
+      <div class="field" style="margin-top: 1.5rem;">
+        <button type="submit">Register</button>
+      </div>
+
+      <div id="form-status" role="status" aria-live="polite"></div>
+    </form>
+  </section>
+
+  <!-- Live summary panel (JS interaction) -->
+  <aside class="card" aria-labelledby="summary-heading">
+    <h2 id="summary-heading">Registration Summary</h2>
+    <ul class="summary-list">
+      <li><span>Name</span><span id="summary-name">&mdash;</span></li>
+      <li><span>Course</span><span id="summary-course">&mdash;</span></li>
+      <li><span>Study Mode</span><span id="summary-mode">Full-time</span></li>
+    </ul>
+    <div class="summary-total">
+      <span>Tuition Fee</span>
+      <span id="summary-fee">K0</span>
+    </div>
+    <p class="hint" style="margin-top: 1rem;">This panel updates live as you fill in the form &mdash; no page reload required.</p>
+  </aside>
+</main>
+
+<footer>
+  ICT461 Unit 1 Lab &mdash; Course Registration Interface &copy; 2026
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  const form = document.getElementById("registration-form");
+  const status = document.getElementById("form-status");
+
+  const fields = {
+    fullName: document.getElementById("full-name"),
+    studentEmail: document.getElementById("student-email"),
+    studentId: document.getElementById("student-id"),
+    course: document.getElementById("course-select"),
+    terms: document.getElementById("terms")
+  };
+
+  const errors = {
+    fullName: document.getElementById("full-name-error"),
+    studentEmail: document.getElementById("student-email-error"),
+    studentId: document.getElementById("student-id-error"),
+    course: document.getElementById("course-error"),
+    terms: document.getElementById("terms-error")
+  };
+
+  const summaryName = document.getElementById("summary-name");
+  const summaryCourse = document.getElementById("summary-course");
+  const summaryMode = document.getElementById("summary-mode");
+  const summaryFee = document.getElementById("summary-fee");
+
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const idPattern = /^\d{9}$/;
+
+  function setInvalid(input, errorEl, isInvalid, message) {
+    input.setAttribute("aria-invalid", isInvalid ? "true" : "false");
+    if (isInvalid) {
+      if (message) errorEl.textContent = message;
+      errorEl.classList.add("visible");
+    } else {
+      errorEl.classList.remove("visible");
+    }
+  }
+
+  function validateField(name) {
+    const input = fields[name];
+    const errorEl = errors[name];
+
+    switch (name) {
+      case "fullName": {
+        const invalid = input.value.trim().length < 2;
+        setInvalid(input, errorEl, invalid);
+        return !invalid;
+      }
+      case "studentEmail": {
+        const invalid = !emailPattern.test(input.value.trim());
+        setInvalid(input, errorEl, invalid);
+        return !invalid;
+      }
+      case "studentId": {
+        const invalid = !idPattern.test(input.value.trim());
+        setInvalid(input, errorEl, invalid);
+        return !invalid;
+      }
+      case "course": {
+        const invalid = input.value === "";
+        setInvalid(input, errorEl, invalid);
+        return !invalid;
+      }
+      case "terms": {
+        const invalid = !input.checked;
+        setInvalid(input, errorEl, invalid);
+        return !invalid;
+      }
+      default:
+        return true;
+    }
+  }
+
+  // Live validation as the user interacts (blur for text fields, change for select/checkbox)
+  fields.fullName.addEventListener("blur", () => validateField("fullName"));
+  fields.studentEmail.addEventListener("blur", () => validateField("studentEmail"));
+  fields.studentId.addEventListener("blur", () => validateField("studentId"));
+  fields.course.addEventListener("change", () => validateField("course"));
+  fields.terms.addEventListener("change", () => validateField("terms"));
+
+  // Live summary panel updates (the required JavaScript interaction)
+  function updateSummary() {
+    summaryName.textContent = fields.fullName.value.trim() || "\u2014";
+
+    const selectedOption = fields.course.options[fields.course.selectedIndex];
+    if (fields.course.value) {
+      summaryCourse.textContent = fields.course.value;
+      const fee = Number(selectedOption.dataset.fee || 0);
+      summaryFee.textContent = "K" + fee;
+    } else {
+      summaryCourse.textContent = "\u2014";
+      summaryFee.textContent = "K0";
+    }
+
+    const modeInput = document.querySelector('input[name="studyMode"]:checked');
+    summaryMode.textContent = modeInput.value === "full-time" ? "Full-time" : "Part-time";
+  }
+
+  fields.fullName.addEventListener("input", updateSummary);
+  fields.course.addEventListener("change", updateSummary);
+  document.querySelectorAll('input[name="studyMode"]').forEach(function (radio) {
+    radio.addEventListener("change", updateSummary);
+  });
+
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const results = [
+      validateField("fullName"),
+      validateField("studentEmail"),
+      validateField("studentId"),
+      validateField("course"),
+      validateField("terms")
+    ];
+
+    const allValid = results.every(Boolean);
+
+    if (allValid) {
+      status.textContent = "Registration successful! A confirmation has been sent to " + fields.studentEmail.value.trim() + ".";
+      status.className = "success";
+      status.setAttribute("role", "status");
+    } else {
+      status.textContent = "Please fix the highlighted errors before submitting.";
+      status.className = "error";
+      status.setAttribute("role", "alert");
+      const firstInvalid = document.querySelector('[aria-invalid="true"]');
+      if (firstInvalid) firstInvalid.focus();
+    }
+  });
+
+  updateSummary();
+})();
+</script>
+
+</body>
+</html>
